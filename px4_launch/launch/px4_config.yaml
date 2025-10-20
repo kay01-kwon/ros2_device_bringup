@@ -1,0 +1,89 @@
+# Common configuration for PX4 autopilot
+#
+/**:
+  ros__parameters:
+    startup_px4_usb_quirk: false
+
+# --- system plugins ---
+
+# sys_status
+/**/sys:
+  ros__parameters:
+    min_voltage: [10.0]   # diagnostics min voltage, use a vector i.e. [16.2, 16.0] for multiple batteries, up-to 10 are supported
+                          # to achieve the same on a ROS launch file do: <rosparam param="sys/min_voltage">[16.2, 16.0]</rosparam>
+    disable_diag: false   # disable all sys_status diagnostics, except heartbeat
+    heartbeat_rate: 1.0   # send heartbeat rate in Hertz
+    conn_timeout: 10.0    # heartbeat timeout in seconds
+
+# sys_time
+/**/time:
+  ros__parameters:
+    time_ref_source: "fcu"    # time_reference source
+    timesync_mode: MAVLINK
+    timesync_avg_alpha: 0.6   # timesync averaging factor
+    timesync_rate: 10.0       # TIMESYNC rate in Hertz (feature disabled if 0.0)
+    system_time_rate: 1.0     # send system time to FCU rate in Hertz (disabled if 0.0)
+
+
+# command
+/**/cmd:
+  ros__parameters:
+    use_comp_id_system_control: false   # quirk for some old FCUs
+
+# imu_pub
+/**/imu:
+  ros__parameters:
+    frame_id: "base_link"
+    # need find actual values
+    linear_acceleration_stdev: 0.0003
+    angular_velocity_stdev: 0.0003490659  # 0.02 degrees
+    orientation_stdev: 1.0
+    magnetic_stdev: 0.0
+
+# local_position
+/**/local_position:
+  ros__parameters:
+    frame_id: "map"
+    tf.send: false
+    tf.frame_id: "map"
+    tf.child_frame_id: "base_link"
+    tf.send_fcu: false
+
+
+# rc_io
+# None
+
+# mocap_pose_estimate
+/**/mocap:
+  ros__parameters:
+    # select mocap source
+    use_tf: false   # ~mocap/tf
+    use_pose: true  # ~mocap/pose
+
+
+# odom
+/**/odometry:
+  ros__parameters:
+    fcu.odom_parent_id_des: "odom"        # desired parent frame rotation of the FCU's odometry
+    fcu.odom_child_id_des: "base_link"    # desired child frame rotation of the FCU's odometry
+    fcu.map_id_des: "map"
+
+
+# vision_pose_estimate
+/**/vision_pose:
+  ros__parameters:
+    tf.listen: false           # enable tf listener (disable topic subscribers)
+    tf.frame_id: "odom"
+    tf.child_frame_id: "vision_estimate"
+    tf.rate_limit: 100.0
+
+# vision_speed_estimate
+/**/vision_speed:
+  ros__parameters:
+    listen_twist: true    # enable listen to twist topic, else listen to vec3d topic
+    twist_cov: true       # enable listen to twist with covariance topic
+
+# vibration
+/**/vibration:
+  ros__parameters:
+    frame_id: "base_link"
