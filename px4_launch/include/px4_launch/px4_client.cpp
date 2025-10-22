@@ -8,6 +8,16 @@ Px4Client::Px4Client()
 
     client_ = this->create_client<mavros_msgs::srv::CommandLong>(service_name);
 
+  RCLCPP_INFO(get_logger(), "Waiting for service '%s' ...", service_name.c_str());
+  while (!client_->wait_for_service(std::chrono::seconds(2))) {
+    if (!rclcpp::ok()) {
+      RCLCPP_ERROR(get_logger(), "Interrupted while waiting for '%s'", service_name.c_str());
+      return;
+    }
+    RCLCPP_WARN(get_logger(), "Still waiting for '%s' ...", service_name.c_str());
+  }
+  RCLCPP_INFO(get_logger(), "Service '%s' is available.", service_name.c_str());
+
 }
 
 Px4Client::~Px4Client()
@@ -33,29 +43,43 @@ void Px4Client::send_command_long()
         RCLCPP_INFO(
         this->get_logger(), 
         "Setting message rates...");
+        
         // 1. Set HIGHRES_IMU rate
         request->param1 = HIGHRES_IMU_ID_;
         request->param2 = HIGHRES_IMU_RATE_;
         msg_name = "HIGHRES_IMU";
         call_service(request, is_set_HIGHRES_IMU_RATE_, msg_name);
-        
+        RCLCPP_INFO(
+            this->get_logger(), 
+            "HIGHRES_IMU rate set to: %.2f microseconds", HIGHRES_IMU_RATE_);
+
+
         // 2. Set ATTITUDE_QUATERNION rate
         request->param1 = ATTITUDE_QUATERNION_ID_;
         request->param2 = ATTITUDE_QUATERNION_RATE_;
         msg_name = "ATTITUDE_QUATERNION";
         call_service(request, is_set_ATTITUDE_QUATERNION_RATE_, msg_name);
+        RCLCPP_INFO(
+        this->get_logger(), 
+        "ATTITUDE_QUATERNION rate set to: %.2f microseconds", ATTITUDE_QUATERNION_RATE_);
 
         // 3. Set RC_CHANNELS rate
         request->param1 = RC_CHANNELS_ID_;
         request->param2 = RC_CHANNELS_RATE_;
         msg_name = "RC_CHANNELS";
         call_service(request, is_set_RC_CHANNELS_RATE_, msg_name);
+        RCLCPP_INFO(
+        this->get_logger(),
+        "RC_CHANNELS rate set to: %.2f microseconds", RC_CHANNELS_RATE_);
 
         // 4. Set LOCAL_POSITION_ODOM rate
         request->param1 = LOCAL_POSITION_ODOM_ID_;
         request->param2 = LOCAL_POSITION_ODOM_RATE_;
         msg_name = "LOCAL_POSITION_ODOM";
         call_service(request, is_set_LOCAL_POSITION_ODOM_RATE_, msg_name);
+        RCLCPP_INFO(
+        this->get_logger(),
+        "LOCAL_POSITION_ODOM rate set to: %.2f microseconds", LOCAL_POSITION_ODOM_RATE_);
 
         if(is_set_HIGHRES_IMU_RATE_ && is_set_ATTITUDE_QUATERNION_RATE_ &&
            is_set_RC_CHANNELS_RATE_ && is_set_LOCAL_POSITION_ODOM_RATE_)
