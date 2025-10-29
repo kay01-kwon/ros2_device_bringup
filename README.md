@@ -43,3 +43,11 @@ source install/setup.bash
 ```
 ros2 run px4_launch px4_client_node
 ```
+
+## To do list
+
+[] Mavros Local Position Estimator setting
+
+[] Px4 --> EV Position offset setting
+
+[] Create D435 launch file
