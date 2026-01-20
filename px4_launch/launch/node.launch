@@ -22,5 +22,13 @@
 		<!-- load blacklist, config -->
 		<param from="$(var pluginlists_yaml)" />
 		<param from="$(var config_yaml)" />
+
+		<!-- Remap pose topics -->
+		<remap from="/mavros/vision_pose/pose" to="/Jetson_Platform/pose"/>
+
+		<!-- Odom setup -->
+		<param name="local_position/tf/send" value="true"/>
+		<param name="local_position/tf/frame_id" value="world"/>
+		<param name="local_position/tf/child_frame_id" value="base_link"/>
 	</node>
 </launch>
