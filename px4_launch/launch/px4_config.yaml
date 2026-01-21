@@ -43,9 +43,9 @@
 # local_position
 /**/local_position:
   ros__parameters:
-    frame_id: "map"
+    frame_id: "world"
     tf.send: true
-    tf.frame_id: "map"
+    tf.frame_id: "world"
     tf.child_frame_id: "base_link"
     tf.send_fcu: false
 
